@@ -1,0 +1,18 @@
+services:
+  localstack:
+    container_name: localstack
+    image: localstack/localstack:4.4.0
+    ports:
+      - "4566:4566"
+    environment:
+      DEBUG: 1
+      SERVICES: s3,sqs
+    volumes:
+      - "./init-aws.sh:/etc/localstack/init/ready.d/init-aws.sh"  # ready hook
+    healthcheck:
+      test: >-
+        curl -sf localhost:4566/_localstack/init/ready | grep -q '"completed": true,'
+      interval: 5s
+      timeout: 5s
+      start_period: 1m
+      retries: 5
